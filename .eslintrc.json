@@ -32,6 +32,12 @@
   "rules": {
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "warn",
+    "@typescript-eslint/explicit-funcion-return-type": [
+      "error",
+      {
+        "allowExceptions": true,
+      }
+    ],
     "prettier/prettier": "error",
     "no-use-before-define": "off",
     "react/jsx-filename-extension": [
