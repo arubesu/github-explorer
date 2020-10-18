@@ -10,17 +10,19 @@ interface Repository {
   owner: {
     login: string;
     avatar_url: string;
-  }
+  };
 }
 
 const Dashboard: React.FC = () => {
   const [newRepository, setNewRepository] = useState('');
   const [repositories, setRepositories] = useState<Repository[]>([]);
 
-  async function handleAddNewRepository(e: FormEvent<HTMLFormElement>): Promise<void> {
+  async function handleAddNewRepository(
+    e: FormEvent<HTMLFormElement>,
+  ): Promise<void> {
     e.preventDefault();
 
-    const response = await api.get<Repository>(`repos/${newRepository}`)
+    const response = await api.get<Repository>(`repos/${newRepository}`);
 
     const repository = response.data;
 
@@ -35,26 +37,26 @@ const Dashboard: React.FC = () => {
       <Form onSubmit={handleAddNewRepository}>
         <input
           value={newRepository}
-          onChange={(e) => setNewRepository(e.target.value)}
+          onChange={e => setNewRepository(e.target.value)}
           placeholder="Digite o nome do repositório"
         />
         <button type="submit"> Pesquisar </button>
       </Form>
 
       <Repositories>
-        {
-          repositories.map(repository => (
-            <a key={repository.fullname} href="ref">
-              <img src={repository.owner.avatar_url} alt={repository.owner.login} />
-              <div>
-                <strong>{repository.fullname}</strong>
-                <p>{repository.description}</p>
-              </div>
-              <FiChevronRight size={20} />
-            </a>
-          ))
-        }
-
+        {repositories.map(repository => (
+          <a key={repository.fullname} href="ref">
+            <img
+              src={repository.owner.avatar_url}
+              alt={repository.owner.login}
+            />
+            <div>
+              <strong>{repository.fullname}</strong>
+              <p>{repository.description}</p>
+            </div>
+            <FiChevronRight size={20} />
+          </a>
+        ))}
       </Repositories>
     </>
   );
