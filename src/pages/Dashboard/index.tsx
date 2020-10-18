@@ -1,11 +1,11 @@
 import React, { FormEvent, useState } from 'react';
 import { FiChevronRight } from 'react-icons/fi';
-import { Title, Form, Repositories } from './styles';
+import { Title, Form, Repositories, Error } from './styles';
 import api from '../../services/api';
 import logo from '../../assets/logo.svg';
 
 interface Repository {
-  fullname: string;
+  full_name: string;
   description: string;
   owner: {
     login: string;
@@ -14,6 +14,7 @@ interface Repository {
 }
 
 const Dashboard: React.FC = () => {
+  const [inputError, setInputError] = useState('');
   const [newRepository, setNewRepository] = useState('');
   const [repositories, setRepositories] = useState<Repository[]>([]);
 
@@ -22,19 +23,30 @@ const Dashboard: React.FC = () => {
   ): Promise<void> {
     e.preventDefault();
 
-    const response = await api.get<Repository>(`repos/${newRepository}`);
+    if (!newRepository) {
+      setInputError('Digite o nome de um repositório');
+      return;
+    }
 
-    const repository = response.data;
+    try {
+      const response = await api.get<Repository>(`repos/${newRepository}`);
 
-    setRepositories([...repositories, repository]);
-    setNewRepository('');
+      const repository = response.data;
+
+      setRepositories([...repositories, repository]);
+
+      setNewRepository('');
+      setInputError('');
+    } catch (error) {
+      setInputError('Erro ao localizar o repositório');
+    }
   }
 
   return (
     <>
       <img src={logo} alt="Github Explorer" />
       <Title>Explore repositórios no Github</Title>
-      <Form onSubmit={handleAddNewRepository}>
+      <Form hasError={!!inputError} onSubmit={handleAddNewRepository}>
         <input
           value={newRepository}
           onChange={e => setNewRepository(e.target.value)}
@@ -42,16 +54,17 @@ const Dashboard: React.FC = () => {
         />
         <button type="submit"> Pesquisar </button>
       </Form>
+      {inputError && <Error>{inputError}</Error>}
 
       <Repositories>
         {repositories.map(repository => (
-          <a key={repository.fullname} href="ref">
+          <a key={repository.full_name} href="ref">
             <img
               src={repository.owner.avatar_url}
               alt={repository.owner.login}
             />
             <div>
-              <strong>{repository.fullname}</strong>
+              <strong>{repository.full_name}</strong>
               <p>{repository.description}</p>
             </div>
             <FiChevronRight size={20} />
