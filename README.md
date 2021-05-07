@@ -93,7 +93,7 @@ $ npm install
 # Run the application in development mode
 $ npm start
 
-# The server will start at port: 3333 - go to http://localhost:3333
+# The application will start at port: 3000 - go to http://localhost:3000
 
 ```
 ---
